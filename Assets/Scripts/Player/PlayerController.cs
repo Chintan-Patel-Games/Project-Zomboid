@@ -1,3 +1,4 @@
+using ProjectZomboid.Player.ModelSO;
 using ProjectZomboid.Player.Model;
 using ProjectZomboid.Player.View;
 using UnityEngine;
@@ -6,7 +7,8 @@ namespace ProjectZomboid.Player.Controller
 {
     public class PlayerController
     {
-        private PlayerModelSO model;
+        private PlayerModelSO modelSO;
+        private PlayerModel model;
         private PlayerView view;
 
         // player movement
@@ -28,15 +30,20 @@ namespace ProjectZomboid.Player.Controller
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
 
-        public void Initialize(PlayerModelSO model, PlayerView view)
+        public void Initialize(PlayerModelSO modelSO, PlayerView view)
         {
-            this.model = model;
+            model = new PlayerModel
+            {
+                currentHealth = modelSO.maxHealth
+            };
+
+            this.modelSO = modelSO;
             this.view = view;
 
             AssignAnimationIDs();
 
-            _jumpTimeoutDelta = model.JumpTimeout;
-            _fallTimeoutDelta = model.FallTimeout;
+            _jumpTimeoutDelta = modelSO.JumpTimeout;
+            _fallTimeoutDelta = modelSO.FallTimeout;
         }
 
         private void AssignAnimationIDs()
@@ -58,8 +65,10 @@ namespace ProjectZomboid.Player.Controller
         private void GroundedCheck()
         {
             // set sphere position, with offset
-            Vector3 spherePosition = new Vector3(view.transform.position.x, view.transform.position.y - model.GroundedOffset, view.transform.position.z);
-            model.IsGrounded = Physics.CheckSphere(spherePosition, model.GroundedRadius, model.GroundLayers, QueryTriggerInteraction.Ignore);
+            Vector3 spherePosition = view.transform.position;
+            spherePosition.y -= modelSO.GroundedOffset;
+
+            model.IsGrounded = Physics.CheckSphere(spherePosition, modelSO.GroundedRadius, modelSO.GroundLayers, QueryTriggerInteraction.Ignore);
 
             // update animator if using character
             if (view.HasAnimator)
@@ -69,7 +78,7 @@ namespace ProjectZomboid.Player.Controller
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = view.Input.sprint ? model.SprintSpeed : model.MoveSpeed;
+            float targetSpeed = view.Input.sprint ? modelSO.SprintSpeed : modelSO.MoveSpeed;
 
             // if there is no input, set the target speed to 0
             if (view.Input.move == Vector2.zero) targetSpeed = 0.0f;
@@ -84,7 +93,7 @@ namespace ProjectZomboid.Player.Controller
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
             {
-                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * model.SpeedChangeRate);
+                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * modelSO.SpeedChangeRate);
 
                 // round speed to 3 decimal places
                 _speed = Mathf.Round(_speed * 1000f) / 1000f;
@@ -92,7 +101,7 @@ namespace ProjectZomboid.Player.Controller
             else
                 _speed = targetSpeed;
 
-            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * model.SpeedChangeRate);
+            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * modelSO.SpeedChangeRate);
 
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
@@ -104,7 +113,7 @@ namespace ProjectZomboid.Player.Controller
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg;
 
-                float rotation = Mathf.SmoothDampAngle(view.transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, model.RotationSmoothTime);
+                float rotation = Mathf.SmoothDampAngle(view.transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, modelSO.RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
                 view.transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
@@ -128,7 +137,7 @@ namespace ProjectZomboid.Player.Controller
             if (model.IsGrounded)
             {
                 // reset the fall timeout timer
-                _fallTimeoutDelta = model.FallTimeout;
+                _fallTimeoutDelta = modelSO.FallTimeout;
 
                 // update animator if using character
                 if (view.HasAnimator)
@@ -145,7 +154,7 @@ namespace ProjectZomboid.Player.Controller
                 if (view.Input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(model.JumpHeight * -2f * model.Gravity);
+                    _verticalVelocity = Mathf.Sqrt(modelSO.JumpHeight * -2f * modelSO.Gravity);
 
                     // update animator if using character
                     if (view.HasAnimator)
@@ -159,7 +168,7 @@ namespace ProjectZomboid.Player.Controller
             else
             {
                 // reset the jump timeout timer
-                _jumpTimeoutDelta = model.JumpTimeout;
+                _jumpTimeoutDelta = modelSO.JumpTimeout;
 
                 // fall timeout
                 if (_fallTimeoutDelta >= 0.0f)
@@ -171,15 +180,16 @@ namespace ProjectZomboid.Player.Controller
                         view.Animator.SetBool(_animIDFreeFall, true);
                 }
 
-                // if we are not grounded, do not jump
+                // if player is not grounded, do not jump
                 view.Input.jump = false;
             }
 
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
             if (_verticalVelocity < _terminalVelocity)
-                _verticalVelocity += model.Gravity * Time.deltaTime;
+                _verticalVelocity += modelSO.Gravity * Time.deltaTime;
         }
 
         public Vector3 GetPosition() => view.transform.position;
+        public Transform GetTransform() => view.transform;
     }
 }

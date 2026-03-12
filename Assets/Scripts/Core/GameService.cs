@@ -1,4 +1,4 @@
-using ProjectZomboid.Player.Model;
+using ProjectZomboid.Player.ModelSO;
 using ProjectZomboid.Player.Service;
 using ProjectZomboid.Player.View;
 using UnityEngine;

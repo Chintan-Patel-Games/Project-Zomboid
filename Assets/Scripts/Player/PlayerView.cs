@@ -42,8 +42,6 @@ namespace ProjectZomboid.Player.View
 #endif
         }
 
-        private void Update() => _hasAnimator = TryGetComponent(out _animator);
-
         // Called via Animation Events in the Animator
         private void OnFootstep(AnimationEvent animationEvent)
         {
