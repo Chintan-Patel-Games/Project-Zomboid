@@ -1,4 +1,5 @@
 using ProjectZomboid.Core.InputSystem;
+using ProjectZomboid.Noise;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -97,7 +98,7 @@ namespace ProjectZomboid.Player.View
                     AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
                 }
 
-                //NoiseService.EmitNoise(transform.position, 10f);
+                NoiseService.EmitNoise(transform.position, 10f);
             }
         }
 
@@ -105,6 +106,8 @@ namespace ProjectZomboid.Player.View
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(controller.center), FootstepAudioVolume);
+
+            NoiseService.EmitNoise(transform.position, 10f);
         }
     }
 }
