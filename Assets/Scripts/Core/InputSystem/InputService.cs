@@ -1,3 +1,4 @@
+using ProjectZomboid.Shared;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -5,8 +6,8 @@ using UnityEngine.InputSystem;
 
 namespace ProjectZomboid.Core.InputSystem
 {
-	public class PlayerInputs : MonoBehaviour
-	{
+	public class InputService : GenericMonoSingleton<InputService>
+    {
 		[Header("Character Input Values")]
 		public Vector2 move;
 		public bool jump;
