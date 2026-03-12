@@ -17,7 +17,9 @@ namespace ProjectZomboid.Player.Service
 
         public void Tick() => controller.TickUpdate();
 
+        public void TakeDamage(float damage) => controller.TakeDamage(damage);
+
         public Vector3 GetPlayerPosition() => controller.GetPosition();
-        public Transform PlayerTransform => controller.GetTransform();
+        public Transform PlayerTransform() => controller.GetTransform();
     }
 }
