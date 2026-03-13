@@ -11,20 +11,19 @@ namespace ProjectZomboid.Player.View
 #endif
     public class PlayerView : MonoBehaviour 
     {
-        public AudioClip LandingAudioClip;
-        public AudioClip[] FootstepAudioClips;
-        [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
+        [SerializeField] private AudioClip LandingAudioClip;
+        [SerializeField] private AudioClip[] FootstepAudioClips;
+        [Range(0, 1)][SerializeField] private float FootstepAudioVolume = 0.5f;
+        [SerializeField] private ParticleSystem footstepParticle;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput playerInput;
 #endif
         private Animator animator;
-        public Animator Animator => animator;
-
         private CharacterController controller;
-        public CharacterController Controller => controller;
-
         private InputService input;
+
+        public CharacterController Controller => controller;
         public InputService Input => input;
 
         private bool hasAnimator;
@@ -35,6 +34,7 @@ namespace ProjectZomboid.Player.View
         private int animIDJump;
         private int animIDFreeFall;
         private int animIDMotionSpeed;
+        private int animIDDeath;
 
         private void Awake()
         {
@@ -43,6 +43,7 @@ namespace ProjectZomboid.Player.View
             animIDJump = Animator.StringToHash("Jump");
             animIDFreeFall = Animator.StringToHash("FreeFall");
             animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            animIDDeath = Animator.StringToHash("Death");
         }
 
         private void Start()
@@ -60,31 +61,37 @@ namespace ProjectZomboid.Player.View
         public void SetSpeed(float value)
         {
             if (!hasAnimator) return;
-            Animator.SetFloat(animIDSpeed, value);
+            animator.SetFloat(animIDSpeed, value);
         }
 
         public void SetMotionSpeed(float value)
         {
             if (!hasAnimator) return;
-            Animator.SetFloat(animIDMotionSpeed, value);
+            animator.SetFloat(animIDMotionSpeed, value);
         }
 
         public void SetGrounded(bool grounded)
         {
             if (!hasAnimator) return;
-            Animator.SetBool(animIDGrounded, grounded);
+            animator.SetBool(animIDGrounded, grounded);
         }
 
         public void SetJump(bool state)
         {
             if (!hasAnimator) return;
-            Animator.SetBool(animIDJump, state);
+            animator.SetBool(animIDJump, state);
         }
 
         public void SetFreeFall(bool state)
         {
             if (!hasAnimator) return;
-            Animator.SetBool(animIDFreeFall, state);
+            animator.SetBool(animIDFreeFall, state);
+        }
+
+        public void SetDeath()
+        {
+            if (!hasAnimator) return;
+            animator.SetTrigger(animIDDeath);
         }
 
         // Called via Animation Events in the Animator
@@ -98,7 +105,8 @@ namespace ProjectZomboid.Player.View
                     AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(controller.center), FootstepAudioVolume);
                 }
 
-                NoiseService.EmitNoise(transform.position, 10f);
+                NoiseService.EmitNoise(transform.position, 6f);
+                footstepParticle?.Emit(1);
             }
         }
 
@@ -107,7 +115,8 @@ namespace ProjectZomboid.Player.View
             if (animationEvent.animatorClipInfo.weight > 0.5f)
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(controller.center), FootstepAudioVolume);
 
-            NoiseService.EmitNoise(transform.position, 10f);
+            NoiseService.EmitNoise(transform.position, 6f);
+            footstepParticle?.Emit(1);
         }
     }
 }

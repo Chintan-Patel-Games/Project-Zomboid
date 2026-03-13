@@ -21,7 +21,7 @@ namespace ProjectZomboid.UI.Noise
 
             float t = timer / duration;
 
-            transform.localScale = Vector3.one * Mathf.Lerp(0, maxRadius, t);
+            transform.localScale = Vector3.one * Mathf.Lerp(0, maxRadius * 2f, t);
 
             if (timer >= duration)
                 Destroy(gameObject);

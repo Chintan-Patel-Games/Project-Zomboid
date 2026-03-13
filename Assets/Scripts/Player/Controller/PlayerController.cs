@@ -21,17 +21,20 @@ namespace ProjectZomboid.Player.Controller
             movement.Initialize(model, modelSO, view);
 
             health = new PlayerHealth();
-            health.Initialize(model, modelSO);
+            health.Initialize(model, view);
         }
 
         public void TickUpdate()
         {
             movement.GroundedCheck();
             movement.JumpAndGravity();
-            movement.Move();
+
+            if (!model.IsDead)
+                movement.Move();
         }
 
         public void TakeDamage(float damage) => health.TakeDamage(damage);
+        public bool IsDead() => model.IsDead;
 
         public Vector3 GetPosition() => movement.GetPosition();
         public Transform GetTransform() => movement.GetTransform();

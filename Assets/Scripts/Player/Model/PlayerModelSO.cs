@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ProjectZomboid.Player.ModelSO
 {
-    [CreateAssetMenu(menuName = "Project Zomboid/Player/PlayerModel")]
+    [CreateAssetMenu(menuName = "Project Zomboid/Player/PlayerConfig")]
     public class PlayerModelSO : ScriptableObject
     {
         [Header("Stats")]
