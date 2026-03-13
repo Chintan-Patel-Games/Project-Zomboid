@@ -11,10 +11,15 @@ namespace ProjectZomboid.Player.View
 #endif
     public class PlayerView : MonoBehaviour 
     {
+        [Header("Footstep")]
         [SerializeField] private AudioClip LandingAudioClip;
         [SerializeField] private AudioClip[] FootstepAudioClips;
         [Range(0, 1)][SerializeField] private float FootstepAudioVolume = 0.5f;
         [SerializeField] private ParticleSystem footstepParticle;
+
+        [Header("Death")]
+        [SerializeField] private AudioClip DeathAudioClip;
+        [Range(0, 1)][SerializeField] private float DeathAudioVolume = 0.5f;
 
 #if ENABLE_INPUT_SYSTEM
         private PlayerInput playerInput;
@@ -92,6 +97,7 @@ namespace ProjectZomboid.Player.View
         {
             if (!hasAnimator) return;
             animator.SetTrigger(animIDDeath);
+            AudioSource.PlayClipAtPoint(DeathAudioClip, transform.TransformPoint(controller.center), DeathAudioVolume);
         }
 
         // Called via Animation Events in the Animator

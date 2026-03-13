@@ -17,7 +17,7 @@ MonoBehaviour:
   chaseSpeed: 1.5
   visionRange: 10
   hearingRange: 8
-  attackRange: 1
+  attackRange: 0.75
   meeleAttackDmg: 10
   rangedAttackDmg: 6
   attackCooldown: 1.2

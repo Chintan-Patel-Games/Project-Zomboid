@@ -1135,6 +1135,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
   FootstepAudioVolume: 0.3
   footstepParticle: {fileID: 2720592445235788611}
+  DeathAudioClip: {fileID: 8300000, guid: 3a615ab1335f3db45b5fbfcaab4bf66d, type: 3}
+  DeathAudioVolume: 0.75
 --- !u!114 &7223112679675499107
 MonoBehaviour:
   m_ObjectHideFlags: 0
