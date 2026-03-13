@@ -1,5 +1,6 @@
 using ProjectZomboid.Core.InputSystem;
 using ProjectZomboid.Noise;
+using ProjectZomboid.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -98,6 +99,7 @@ namespace ProjectZomboid.Player.View
             if (!hasAnimator) return;
             animator.SetTrigger(animIDDeath);
             AudioSource.PlayClipAtPoint(DeathAudioClip, transform.TransformPoint(controller.center), DeathAudioVolume);
+            GameOverUI.Instance.ShowGameOver();
         }
 
         // Called via Animation Events in the Animator

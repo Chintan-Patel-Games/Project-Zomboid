@@ -1,16 +1,32 @@
+using ProjectZomboid.Shared;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GameOverUI : MonoBehaviour
+namespace ProjectZomboid.UI
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class GameOverUI : GenericMonoSingleton<GameOverUI>
     {
-        
-    }
+        [SerializeField] private GameObject gameOverPanel;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        protected override void Awake()
+        {
+            base.Awake();
+            gameOverPanel.SetActive(false);
+        }
+
+        public void ShowGameOver()
+        {
+            gameOverPanel.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            //Time.timeScale = 0f;
+        }
+
+        public void RestartGame()
+        {
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Debug.Log("Restarting game...");
+        }
     }
 }
