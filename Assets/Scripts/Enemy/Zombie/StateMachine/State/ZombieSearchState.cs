@@ -7,10 +7,7 @@ namespace ProjectZomboid.Enemy.Zombie.StateMachine
     {
         public ZombieController Owner { get; set; }
 
-        public void OnEnterState()
-        {
-            //Owner.OnNoiseDetected();
-        }
+        public void OnEnterState() => Owner.InvestigateNoise(Owner.Model.lastNoisePosition);
 
         public void UpdateState() { }
 

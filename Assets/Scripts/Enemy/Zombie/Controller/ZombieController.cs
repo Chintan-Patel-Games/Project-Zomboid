@@ -41,13 +41,19 @@ namespace ProjectZomboid.Enemy.Zombie.Controller
             NoiseService.OnNoiseEmitted += detection.OnNoiseHeard;
         }
 
-        public void OnNoiseDetected(Vector3 noisePosition) => movement.MoveTo(noisePosition);
+        public void InvestigateNoise(Vector3 noisePosition) => movement.MoveTo(noisePosition);
+
+        public void OnNoiseDetected(Vector3 noisePosition)
+        {
+            model.lastNoisePosition = noisePosition;
+            stateMachine.ChangeState(ZombieState.Search);
+        }
 
         public void OnPlayerDetected() => model.isChasing = true;
 
         public void Tick()
         {
-            if (model.isChasing && detection.CanSeePlayer(playerService.PlayerTransform()))
+            if (model.isChasing || detection.CanSeePlayer(playerService.PlayerTransform()))
                 stateMachine.ChangeState(ZombieState.Chase);
 
             stateMachine.Update();
@@ -56,5 +62,7 @@ namespace ProjectZomboid.Enemy.Zombie.Controller
         }
 
         public void Dispose() => NoiseService.OnNoiseEmitted -= detection.OnNoiseHeard;
+
+        public ZombieModel Model => model;
     }
 }
