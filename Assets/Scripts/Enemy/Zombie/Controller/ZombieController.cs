@@ -3,6 +3,7 @@ using ProjectZomboid.Enemy.Zombie.Controller.Detection;
 using ProjectZomboid.Enemy.Zombie.Controller.Movement;
 using ProjectZomboid.Enemy.Zombie.Model;
 using ProjectZomboid.Enemy.Zombie.ModelSO;
+using ProjectZomboid.Enemy.Zombie.StateMachine;
 using ProjectZomboid.Enemy.Zombie.View;
 using ProjectZomboid.Noise;
 using ProjectZomboid.Player.Service;
@@ -16,12 +17,14 @@ namespace ProjectZomboid.Enemy.Zombie.Controller
         private ZombieAttack attack;
         private ZombieMovement movement;
         private ZombieDetection detection;
+        private ZombieStateMachine stateMachine;
 
         private PlayerService playerService;
 
         public void Initialize(ZombieView view, ZombieModelSO config, PlayerService playerService)
         {
             model = new ZombieModel();
+            stateMachine = new ZombieStateMachine(this);
 
             attack = new ZombieAttack();
             attack.Initialize(view, config, model);
@@ -30,24 +33,24 @@ namespace ProjectZomboid.Enemy.Zombie.Controller
             movement.Initialize(view, config);
 
             detection = new ZombieDetection();
-            detection.Initialize(view);
+            detection.Initialize(view, config, stateMachine);
 
             this.playerService = playerService;
 
             detection.OnNoiseDetected += OnNoiseDetected;
-
             NoiseService.OnNoiseEmitted += detection.OnNoiseHeard;
         }
 
-        private void OnNoiseDetected(Vector3 noisePosition) => movement.MoveTo(noisePosition);
+        public void OnNoiseDetected(Vector3 noisePosition) => movement.MoveTo(noisePosition);
 
         public void OnPlayerDetected() => model.isChasing = true;
 
         public void Tick()
         {
-            if (model.isChasing)
-                movement.ChasePlayer(playerService.GetPlayerPosition());
+            if (model.isChasing && detection.CanSeePlayer(playerService.PlayerTransform()))
+                stateMachine.ChangeState(ZombieState.Chase);
 
+            stateMachine.Update();
             movement.Tick();
             attack.Tick(playerService);
         }

@@ -17,6 +17,14 @@ MonoBehaviour:
   chaseSpeed: 1.5
   visionRange: 10
   hearingRange: 8
+  viewDistance: 12
+  viewAngle: 120
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 128
   attackRange: 0.75
   meeleAttackDmg: 10
   rangedAttackDmg: 6

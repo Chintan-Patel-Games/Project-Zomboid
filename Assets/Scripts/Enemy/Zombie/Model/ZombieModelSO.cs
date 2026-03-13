@@ -15,6 +15,13 @@ namespace ProjectZomboid.Enemy.Zombie.ModelSO
         public float visionRange = 10f;
         public float hearingRange = 8f;
 
+        [Header("Vision")]
+        public float viewDistance = 12f;
+        [Range(0, 360)]
+        public float viewAngle = 120f;
+        public LayerMask playerLayer;
+        public LayerMask obstacleLayer;
+
         [Header("Attack")]
         public float attackRange = 1.5f;
         public float meeleAttackDmg = 10f;
