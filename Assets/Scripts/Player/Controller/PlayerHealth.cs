@@ -1,5 +1,5 @@
 using ProjectZomboid.Player.Model;
-using ProjectZomboid.Player.ModelSO;
+using ProjectZomboid.Player.View;
 using UnityEngine;
 
 namespace ProjectZomboid.Player.Controller.Health
@@ -7,17 +7,19 @@ namespace ProjectZomboid.Player.Controller.Health
     public class PlayerHealth
     {
         private PlayerModel model;
-        private PlayerModelSO config;
+        private PlayerView view;
 
-        public void Initialize(PlayerModel model, PlayerModelSO config)
+        public void Initialize(PlayerModel model, PlayerView view)
         {
             this.model = model;
-            this.config = config;
+            this.view = view;
         }
 
         public void TakeDamage(float damage)
         {
             model.currentHealth -= damage;
+
+            Debug.Log($"Player took {damage} damage. Current health: {model.currentHealth}");
 
             if (model.currentHealth <= 0)
                 Die();
@@ -25,7 +27,9 @@ namespace ProjectZomboid.Player.Controller.Health
 
         private void Die()
         {
-            Debug.Log("Player Dead");
+            if (model.IsDead) return;
+            model.IsDead = true;
+            view.SetDeath();
         }
     }
 }

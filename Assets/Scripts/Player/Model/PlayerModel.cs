@@ -4,5 +4,6 @@ namespace ProjectZomboid.Player.Model
     {
         public float currentHealth;
         public bool IsGrounded = true;
+        public bool IsDead = false;
     }
 }
